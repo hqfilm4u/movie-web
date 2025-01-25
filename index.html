@@ -1,78 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Website</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" type="image/x-icon" href="Cric stream Favicon.jpg">
+    <title>TG-@cric_stream</title>
+    <style>
+       
+        body {
+            margin: 0px;
+            padding-top: 5px;
+            font-family: Arial, sans-serif;
+            width: 100%
+        }
+
+       
+        #jwplayerDiv {
+            width: 100%;
+            height: 100%;
+            
+        }
+
+        
+
+           /* Popup styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1c1c1c;
+            border-radius: 20px; /* Rounded card style */
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+            z-index: 1002;
+            width: 90%;
+            max-width: 400px;
+            animation: fadeIn 0.5s;
+        }
+
+        .popup h2 {
+            color: #ffcc00;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .popup p {
+            margin-bottom: 20px;
+            color: #ccc;
+            font-size: 16px;
+        }
+
+        .popup button {
+            background-color: #0088cc;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .popup button:hover {
+            background-color: #006699;
+        }
+
+        .popup .close-btn {
+            background-color: #555;
+        }
+
+        .popup .close-btn:hover {
+            background-color: #333;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+   
+    </style>
+    <script src="https://cdn.jwplayer.com/libraries/SAHhwvZq.js"></script>
 </head>
-
 <body>
-    <header>
-        <div class="container">
-            <h1>Movie Mania</h1>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#movies">Movies</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div id="jwplayerDiv"></div>
+    <script>
+        // Function to get URL query parameters
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
 
-    <section id="home" class="hero">
-        <div class="container">
-            <h2>Welcome to Movie Mania</h2>
-            <p>Your ultimate destination for the latest movies</p>
-        </div>
-    </section>
+        // Retrieve the 'file' parameter from the URL
+        const hlsStreamUrl = getQueryParam("file");
 
-    <section id="movies" class="movie-list">
-        <div class="container">
-            <h2>Latest Movies</h2>
-            <div class="movie-card">
-                <img src="https://images-cdn.ubuy.co.in/63ef0a397f1d781bea0a2464-star-wars-rogue-one-movie-poster.jpg"
-                    alt="Movie 1">
-                <h3>Movie Title 1</h3>
-                <p>Some description about Movie 1.</p>
-            </div>
-            <div class="movie-card">
-                <img src="https://images-cdn.ubuy.co.in/634d0a48023cd2292277f3df-avengers-endgame-marvel-studios-framed.jpg"
-                    alt="Movie 2">
-                <h3>Movie Title 2</h3>
-                <p>Some description about Movie 2.</p>
-            </div>
-            <div class="movie-card">
-                <img src="https://www.washingtonpost.com/graphics/2019/entertainment/oscar-nominees-movie-poster-design/img/1800/BlackPanther59f24429d2605.jpg"
-                    alt="Movie 3">
-                <h3>Movie Title 3</h3>
-                <p>Some description about Movie 3.</p>
-            </div>
-        </div>
-    </section>
+        if (!hlsStreamUrl) {
+            alert("No HLS stream URL provided. Please add a 'file' parameter to the URL.");
+        } else {
+            // Initialize JW Player
+            const playerInstance = jwplayer("jwplayerDiv");
 
-    <section id="about" class="about">
-        <div class="container">
-            <h2>About Us</h2>
-            <p>Information about the website and its purpose.</p>
-        </div>
-    </section>
+            // Configure the player with the HLS stream from URL parameter
+            playerInstance.setup({
+                file: hlsStreamUrl,
+                width: "100%",
+                height: "100%",
+                aspectratio: "16:9",
+                autostart: true,
+                mute: false, 
+                type: "hls", // Ensures HLS compatibility
+                preload: "auto", // Preload stream for faster playback
+                cast: {
+                    appid: "CC1AD845" // Chromecast App ID (optional)
+                }
+            });
 
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2>Contact Us</h2>
-            <p>Get in touch with us through the following platforms.</p>
-        </div>
-    </section>
+            // Optional: Handle player errors gracefully
+            playerInstance.on('error', function(error) {
+                console.error("Error loading stream:", error.message);
+                alert("Failed to load the stream. Please check the URL and try again.");
+            });
+        }
+    </script>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Movie Mania. All rights reserved.</p>
+      <script>
+        // Restrict iframe embedding
+        if (window.top !== window.self) {
+            window.addEventListener('DOMContentLoaded', function() {
+                document.body.innerHTML = '<div id="message"></div>';
+            });
+        }
+
+        // Display a modern pop-up message when the page starts
+        window.addEventListener("load", function() {
+            // Create the popup element
+            var popup = document.createElement("div");
+            popup.className = "popup";
+
+            // Set the popup content
+            popup.innerHTML = `
+              <h2>Support Us!</h2>
+              <p>Join our Telegram channel <br>@cric_stream official for more updates.</p>
+              <button id="joinButton">Join Now</button>
+              <button id="closeButton" class="close-btn">Already Joined</button>
+            `;
+
+            // Append the popup to the body
+            document.body.appendChild(popup);
+
+            // Add click event to the Join Now button
+            document.getElementById("joinButton").addEventListener("click", function() {
+                window.location.href = "https://t.me/cric_stream";
+            });
+
+            // Add click event to the Already Joined button to close the popup
+            document.getElementById("closeButton").addEventListener("click", function() {
+                document.body.removeChild(popup);
+            });
+        });
+    </script>
+
+       <center>
+            <!-- BEGIN: Powered by Supercounters.com -->
+            <center><script type="text/javascript" src="//widget.supercounters.com/ssl/online_t.js"></script><script type="text/javascript">sc_online_t(1707487,"Users Online","170ddb");</script><br><noscript><a href="https://www.supercounters.com/">supercounters.com</a></noscript>
+            </center>
+            <!-- END: Powered by Supercounters.com -->
+
+            
+        </center>
+
+        <div style="background-color: #0074d9; text-align: center; padding: 10px;">
+            <a href="https://t.me/cric_stream" target="_blank">
+                <button id="joinTelegramButton">Join Telegram</button>
+            </a>
         </div>
-    </footer>
+    </div>
+    
 </body>
-
 </html>
